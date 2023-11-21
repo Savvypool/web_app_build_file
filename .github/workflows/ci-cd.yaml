@@ -24,14 +24,10 @@ jobs:
   
     - name: Download PEM file from S3
       env:
-        S3_BUCKET: ${{ secrets.S3_BUCKET }}
-        PEM_OBJECT_KEY: ${{ secrets.TEST_PEM_OBJECT_KEY }}
-        CONFIG_OBJECT_KEY: ${{ secrets.TEST_CONFIG_OBJECT_KEY }}
+        PEM_OBJECT_KEY: ${{ secrets.PEM_OBJECT_KEY }}
       run: |
-        aws s3 cp s3://$S3_BUCKET/$PEM_OBJECT_KEY ./secret.key
+        aws s3 cp s3://$PEM_OBJECT_KEY ./secret.key
         chmod 600 ./secret.key
-        mkdir $GITHUB_WORKSPACE/deploy/env
-        aws s3 cp s3://$S3_BUCKET/$CONFIG_OBJECT_KEY ./deploy/env/config.yaml
     - name: Run Command on Server
       run: |
         ssh -i "secret.key" -o StrictHostKeyChecking=no ubuntu@ec2-65-0-21-186.ap-south-1.compute.amazonaws.com "cd / && make restart_web"
